@@ -1,0 +1,36 @@
+/*
+[name]S1[/name]
+[iconbgcolor]url(template/comeing_vision_s/style/t1/cover.gif)[/iconbgcolor]
+Powered by Comeing!
+*/
+/*img*/
+#coeming_hd{ background:url(hd.jpg) no-repeat 50% 0; }
+
+.pgs #newspecial, .pgs #newspecialtmp { float: left; background: url(pn_post.png) no-repeat 0 0; }
+#newspecial img, #newspecialtmp img { opacity: 0; filter: alpha(opacity=0); }
+
+#vfastpost #vf_b button{ background: url(v.png) no-repeat 0 0;}
+
+.comeing_dian{ background:url(dian.png) no-repeat 0 0!important; }
+
+.comeing_pics_num{ background:url(picnun.gif) no-repeat 0 0!important; }
+.comeing_pics_num span{ background:url(picnun.gif) no-repeat 100% -29px!important; }
+
+/*color*/
+
+#comeing_nv li.a { background:#36B2DD; border:1px solid #27A0D0; }
+#comeing_nv li.a span { color:#CDEBF5; }
+#comeing_nv li.a a { border-bottom:1px solid #27A0D0; }
+
+.pnc, a.pnc { 
+  border: 1px solid #f90;
+	background: #fb0;	
+	/*“ı”∞*/
+	-moz-box-shadow: 0 3px 0px 0px #f90; 
+	-webkit-box-shadow: 0 3px 0px 0px #f90; 
+	box-shadow: 0 3px 0px 0px #f90 ;
+}
+
+.ttp .a a,.ttp a:hover { border-color:#EDA31C; background: #F7C262!important; }
+
+.comeing_ptbar .slidebar em.on{ background:#36B2DD !important;}

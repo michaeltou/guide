@@ -1,0 +1,136 @@
+
+
+./ffmpeg -re -i "/home/michael/video/test.mp4" -vcodec libx264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://192.168.0.109:1935/myapp/test1  
+
+
+
+./ffmpeg -re -i "/home/michael/video/test.mp4" -vcodec libx264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://192.168.0.109:1935/hls/test2
+
+
+./ffmpeg -re -i "/home/michael/video/test.mp4" -vcodec libx264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://192.168.0.111:1935/hls/test2
+
+
+
+rtmp://192.168.0.109:1935/hls/test2
+
+ 
+
+http://192.168.0.109/hls/test2.m3u8
+
+
+
+./ffmpeg -re -i "/home/michael/video/sejie.rmvb" -vcodec libx264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://192.168.0.109:1935/myapp/test1  
+
+
+
+location /stat {
+
+       rtmp_stat all;
+
+rtmp_stat_stylesheet
+
+stat.xsl;
+
+}
+
+location
+
+/stat.xsl{
+
+root
+
+html;
+
+} 
+
+
+
+location /stat{
+	rtmp_stat all;
+	rtmp_stat_stylesheet stat.xsl;
+      }
+
+location /stat.xsl{
+	root html;
+  }
+
+
+
+<script src="//mywebsite.com/jwplayer/jwplayer.js"></script>
+<script>jwplayer.key="ABCdeFG123456SeVenABCdeFG123456SeVen==";</script>
+                
+
+
+./ffmpeg -re -i "/home/michael/video/test.mp4" -vcodec libx264 -vprofile baseline -acodec aac -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://192.168.1.160:1935/myapp/test1  
+
+
+
+ 
+jwplayer("mediaplayer").setup({
+	playlist: [{
+
+		sources: [
+                         {
+
+			file: 'rtmp://192.168.0.109:1935/hls/test2'
+			},
+                        {
+		 	file: 'http://192.168.0.109/hls/test2.m3u8'  
+			}
+                ]
+
+	}],
+	height: 360,
+	primary: "flash",
+	width: 640
+}); 
+
+
+ 
+
+手机播放 :
+http://192.168.0.109/hls/test2.m3u8
+
+http://192.168.0.111/hls/test2.m3u8
+
+最重要的步骤记录：
+
+step:
+1. download nginx , nignx-rtmp-module
+
+2. configue with above 2 module .
+
+3.conf the conf/nginx.conf   ,
+
+  add hls,rtp server.
+
+
+
+4.
+nginx 启动脚本：start.sh (自己启动的脚本)
+#!/bin/bash
+./nginx -c /usr/local/nginx/conf/nginx.conf
+
+
+
+
+
+
+xcode webview 最重要的点记录：
+ // let url = NSURL(string:"http://192.168.0.37:8080/trade/mobile.html"); 
+        //let url = NSURL(string:"http://192.168.0.111/hls/test2.m3u8");  
+    //  let url = NSURL(string:"http://192.168.0.111/h5live.html");  
+        let url = NSURL(string:"http://192.168.0.111:8080/trade3/mobile.html"); 
+        //let url = NSURL(string:"https://www.baidu.com"); 
+        let request = NSURLRequest(URL:url!); 
+//  这个点是保证在页面里面能够进行 inline播放，不会弹出播放器进行播放。
+//http://darktalker.com/2014/05/play-video-inline-iphone-ios7/
+        h5webview.allowsInlineMediaPlayback = true ;
+
+        h5webview.loadRequest(request);
+
+
+
+
+
+

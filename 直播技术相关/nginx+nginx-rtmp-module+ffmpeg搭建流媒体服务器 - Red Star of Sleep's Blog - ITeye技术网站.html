@@ -1,0 +1,588 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" dir="ltr"><head><script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/ca-pub-8990951720398508.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器 - Red Star of Sleep's Blog - ITeye技术网站</title>
+    <meta name="description" content="  博客已搬至CSDN  最新内容请访问: http://blog.csdn.net/redstarofsleep/article/details/45092147  &nbsp;  Nginx本身是一个非常出色的HTTP服务器,FFMPEG是非常好的音视频解决方案.这两个东西通过一个nginx的模块nginx-rtmp-module,组合在一起即可以搭建一个功能相对比较完善的流媒体服务器.  这个流媒体服务 ...">
+    <meta name="keywords" content=" nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器">
+    <link rel="shortcut icon" href="http://redstarofsleep.iteye.com/images/favicon.ico" type="image/x-icon">
+    <link rel="search" type="application/opensearchdescription+xml" href="http://redstarofsleep.iteye.com/open_search.xml" title="ITeye">
+    <link href="http://redstarofsleep.iteye.com/rss" rel="alternate" title="Red Star of Sleep's Blog" type="application/rss+xml">
+    <link href="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/blog.css" media="screen" rel="stylesheet" type="text/css">
+<link href="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/orange.css" media="screen" rel="stylesheet" type="text/css">
+    <script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/ga.js" async="" type="text/javascript"></script><script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/ga.js" async="" type="text/javascript"></script><script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/application.js" type="text/javascript"></script>    
+    <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-535605-1']);
+  _gaq.push(['_setDomainName', 'iteye.com']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+      <link href="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/SyntaxHighlighter.css" media="screen" rel="stylesheet" type="text/css">
+  <script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/shCoreCommon.js" type="text/javascript"></script>
+<script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/hotkey.js" type="text/javascript"></script>
+  <script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/code_favorites.js" type="text/javascript"></script>
+<script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/weiboshare.js" type="text/javascript"></script>
+    
+  <style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><style type="text/css">.dp-j .annotation { color: #646464; }.dp-j .number { color: #C00000; }</style><script type="text/javascript" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/get_ads.php"></script></head>
+  <body>
+    <div id="header">
+      <div id="blog_site_nav">
+  <a href="http://www.iteye.com/" class="homepage">首页</a>
+  <a href="http://www.iteye.com/news">资讯</a>
+  <a href="http://www.iteye.com/magazines">精华</a>
+  <a href="http://www.iteye.com/forums">论坛</a>
+  <a href="http://www.iteye.com/ask">问答</a>
+  <a href="http://www.iteye.com/blogs">博客</a>
+  <a href="http://www.iteye.com/blogs/subjects">专栏</a>
+  <a href="http://www.iteye.com/groups">群组</a>
+  <a href="#" onclick="return false;" id="msna"><u>更多</u> <small>▼</small></a>
+  <div class="quick_menu" style="left: 368px; display: none;">
+    <a target="_blank" href="http://job.iteye.com/iteye">知识库</a>
+    <a href="http://www.iteye.com/search">搜索</a>
+  </div>
+</div>
+
+      <div id="user_nav">
+      <a href="http://redstarofsleep.iteye.com/login" class="welcome" title="登录">您还未登录 !</a>
+    <a href="http://redstarofsleep.iteye.com/login">登录</a>
+    <a href="http://redstarofsleep.iteye.com/signup" class="nobg">注册</a>
+  </div>
+
+    </div>
+
+    <div id="page">
+      <div id="branding" class="clearfix">
+        <div id="blog_name">
+          <h1><a href="http://redstarofsleep.iteye.com/">Red Star of Sleep's Blog</a></h1>
+        </div>
+        <div id="fd"></div>
+        <div id="blog_navbar">
+          <ul>
+            <li class="blog_navbar_for"><a href="http://redstarofsleep.iteye.com/"><strong>博客</strong></a></li>
+            <li><a href="http://redstarofsleep.iteye.com/weibo">微博</a></li>
+            <li><a href="http://redstarofsleep.iteye.com/album">相册</a></li>
+            <li><a href="http://redstarofsleep.iteye.com/link">收藏</a></li>
+            <li><a href="http://redstarofsleep.iteye.com/blog/guest_book">留言</a></li>
+            <li><a href="http://redstarofsleep.iteye.com/blog/profile">关于我</a></li>
+          </ul>
+    
+          <div class="search">
+            <form action="/blog/search" method="get">
+              <input class="search_text" id="query" name="query" style="margin-left: 10px;width: 110px;" type="text">
+              <input class="submit_search" value="" type="submit">
+            </form>
+          </div> 
+          <div id="fd"></div>         
+        </div>
+      </div>
+      
+      <div id="content" class="clearfix">
+        <div id="main">
+          
+
+
+
+          
+
+
+<div class="h-entry" style="display:none">
+  <a href="http://redstarofsleep.iteye.com/" class="p-author" target="_blank">redstarofsleep</a>
+</div>
+
+
+<div class="blog_main">
+  <div class="blog_title">
+    <h3>
+      <a href="http://redstarofsleep.iteye.com/blog/2123752">nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器</a>
+      <em class="actions">      </em>
+    </h3>
+    <ul class="blog_categories"><strong>博客分类：</strong> <li><a href="http://redstarofsleep.iteye.com/category/135651">WebServer</a></li><li><a href="http://redstarofsleep.iteye.com/category/324167">nginx</a></li><li><a href="http://redstarofsleep.iteye.com/category/323902">ffmpeg</a></li><li><a href="http://redstarofsleep.iteye.com/category/324168">rtmp</a></li><li><a href="http://redstarofsleep.iteye.com/category/324169">hls</a></li><li><a href="http://redstarofsleep.iteye.com/category/323901">流媒体</a></li> </ul>
+        <div class="news_tag">&nbsp;</div>
+    	  
+    	
+    	
+  		
+      </div>
+
+  <div id="blog_content" class="blog_content">
+    <div class="iteye-blog-content-contain" style="font-size: 14px;">
+<p><span style="font-family: 'Microsoft YaHei',微软雅黑,SimHei,tahoma,arial,helvetica,sans-serif; font-size: 18px;">博客已搬至CSDN</span></p>
+<p><span style="font-family: 'Microsoft YaHei',微软雅黑,SimHei,tahoma,arial,helvetica,sans-serif; font-size: 18px;">最新内容请访问: <a href="http://blog.csdn.net/redstarofsleep/article/details/45092147">http://blog.csdn.net/redstarofsleep/article/details/45092147</a></span></p>
+<p>&nbsp;</p>
+<p>Nginx本身是一个非常出色的HTTP服务器,FFMPEG是非常好的音视频解决方案.这两个东西通过一个nginx的模块nginx-rtmp-module,组合在一起即可以搭建一个功能相对比较完善的流媒体服务器.</p>
+<p>这个流媒体服务器可以支持RTMP和HLS(Live Http Stream)</p>
+<p>从安装开始</p>
+<p>Nginx的安装参照我之前的这个: <a title="http://redstarofsleep.iteye.com/blog/2010391" href="http://redstarofsleep.iteye.com/blog/2010391">http://redstarofsleep.iteye.com/blog/2010391</a></p>
+<p>不同的是在configure的时候需要增加nginx-rtmp-module的支持,下载好nginx-rtmp-module后解压,然后nginx安装时增加这个模块(--add-module),其它都是一样的.</p>
+<p>&nbsp;</p>
+<div id="" class="dp-highlighter"><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/clipboard_new.swf" flashvars="clipboard=%20%20%20%20.%2Fconfigure%20--prefix%3D%2Fusr%2Flocal%2Fnginx%20--with-pcre%3D%2Fhome%2Fuser%2Fpcre%2Fpcre-8.32%20--with-zlib%3D%2Fhome%2Fuser%2Fzlib%2Fzlib-1.2.8%20--with-openssl%3D%2Fhome%2Fuser%2Fopenssl%2Fopenssl-1.0.1i%20%20--add-module%3D%2Fhome%2Fuser%2Fnginx-rtmp-module" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" height="15" width="14">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_star.png" alt="收藏代码"><img class="spinner" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/spinner.gif" style="display:none"></a></div></div><ol class="dp-j" start="1"><li><span><span>./configure&nbsp;--prefix=/usr/local/nginx&nbsp;--with-pcre=/home/user/pcre/pcre-</span><span class="number">8.32</span><span>&nbsp;--with-zlib=/home/user/zlib/zlib-</span><span class="number">1.2</span><span>.</span><span class="number">8</span><span>&nbsp;--with-openssl=/home/user/openssl/openssl-</span><span class="number">1.0</span><span>.1i&nbsp;&nbsp;--add-module=/home/user/nginx-rtmp-module&nbsp;&nbsp;</span></span></li></ol></div><pre title="nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器" pre_index="0" source_url="http://redstarofsleep.iteye.com/blog/2123752#" codeable_type="BlogComment" codeable_id="" style="display: none;" name="code" class="java">    ./configure --prefix=/usr/local/nginx --with-pcre=/home/user/pcre/pcre-8.32 --with-zlib=/home/user/zlib/zlib-1.2.8 --with-openssl=/home/user/openssl/openssl-1.0.1i  --add-module=/home/user/nginx-rtmp-module</pre>
+<p>FFMPEG的安装参照上一篇: <a title="http://redstarofsleep.iteye.com/blog/2122612" href="http://redstarofsleep.iteye.com/blog/2122612">http://redstarofsleep.iteye.com/blog/2122612</a></p>
+<p>&nbsp;</p>
+<p>nginx配合ffmpeg做流媒体服务器的原理是: nginx通过rtmp模块提供rtmp服务, 
+ffmpeg推送一个rtmp流到nginx, 然后客户端通过访问nginx来收看实时视频流. 
+HLS也是差不多的原理,只是最终客户端是通过HTTP协议来访问的,但是ffmpeg推送流仍然是rtmp的.<br><img alt="" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/7da220c4-0b1f-3bed-b30b-024a8968fd7f.jpg"><br>&nbsp;</p>
+<p>安装完成后,打开Nginx的配置文件nginx.conf进行配置</p>
+<p>首先在里面加入rtmp的配置</p>
+<div id="" class="dp-highlighter"><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/clipboard_new.swf" flashvars="clipboard=rtmp%20%7B%0A%20%20%20%20server%20%7B%0A%20%20%20%20%20%20%20%20listen%201935%3B%0A%0A%20%20%20%20%20%20%20%20application%20myapp%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20live%20on%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20application%20hls%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20live%20on%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20hls%20on%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20hls_path%20%2Ftmp%2Fhls%3B%0A%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%7D%0A%7D" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" height="15" width="14">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_star.png" alt="收藏代码"><img class="spinner" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/spinner.gif" style="display:none"></a></div></div><ol class="dp-j" start="1"><li><span><span>rtmp&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;server&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;listen&nbsp;<span class="number">1935</span><span>;&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;application&nbsp;myapp&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;live&nbsp;on;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;application&nbsp;hls&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;live&nbsp;on;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hls&nbsp;on;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hls_path&nbsp;/tmp/hls;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre title="nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器" pre_index="1" source_url="http://redstarofsleep.iteye.com/blog/2123752#" codeable_type="BlogComment" codeable_id="" style="display: none;" name="code" class="java">rtmp {
+    server {
+        listen 1935;
+
+        application myapp {
+            live on;
+        }
+        application hls {
+            live on;
+            hls on;
+            hls_path /tmp/hls;
+        }
+    }
+}</pre>
+<p>然后,针对hls,还需要在http里面增加一个location配置</p>
+<div id="" class="dp-highlighter"><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/clipboard_new.swf" flashvars="clipboard=location%20%2Fhls%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20types%20%7B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20application%2Fvnd.apple.mpegurl%20m3u8%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20video%2Fmp2t%20ts%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20%7D%0A%20%20%20%20%20%20%20%20%20%20%20%20root%20%2Ftmp%3B%0A%20%20%20%20%20%20%20%20%20%20%20%20add_header%20Cache-Control%20no-cache%3B%0A%7D" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" height="15" width="14">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_star.png" alt="收藏代码"><img class="spinner" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/spinner.gif" style="display:none"></a></div></div><ol class="dp-j" start="1"><li><span><span>location&nbsp;/hls&nbsp;{&nbsp;&nbsp;</span></span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;types&nbsp;{&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;application/vnd.apple.mpegurl&nbsp;m3u8;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;video/mp2t&nbsp;ts;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;root&nbsp;/tmp;&nbsp;&nbsp;</span></li><li><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add_header&nbsp;Cache-Control&nbsp;no-cache;&nbsp;&nbsp;</span></li><li><span>}&nbsp;&nbsp;</span></li></ol></div><pre title="nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器" pre_index="2" source_url="http://redstarofsleep.iteye.com/blog/2123752#" codeable_type="BlogComment" codeable_id="" style="display: none;" name="code" class="java">location /hls {
+            types {
+                application/vnd.apple.mpegurl m3u8;
+                video/mp2t ts;
+            }
+            root /tmp;
+            add_header Cache-Control no-cache;
+}</pre>
+<p>&nbsp;</p>
+<p>这是一个最简单,最基础的配置, rtmp监听1935端口,如果是hls的话用hls 
+on开启hls,并且为hls设置一个临时文件目录hls_path /tmp/hls; 
+其它更高级的配置可以参看nginx-rtmp-module的readme,里面有比较详细的介绍其它的配置,并且它还提供了一个通过JWPlayer
+在网页上播放的例子.</p>
+<p>&nbsp;</p>
+<p>保存完配置文件后,启动nginx,通过netstat -ltn命令可以看到增加了一个1935端口的监听.8080是nginx默认的http监听端口.</p>
+<div id="" class="dp-highlighter"><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/clipboard_new.swf" flashvars="clipboard=%23%20netstat%20-ltn%0AActive%20Internet%20connections%20(only%20servers)%0AProto%20Recv-Q%20Send-Q%20Local%20Address%20%20%20%20%20%20%20%20%20%20%20Foreign%20Address%20%20%20%20%20%20%20%20%20State%20%20%20%20%20%20%0Atcp%20%20%20%20%20%20%20%200%20%20%20%20%20%200%20127.0.1.1%3A53%20%20%20%20%20%20%20%20%20%20%20%200.0.0.0%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20%20%20%20%0Atcp%20%20%20%20%20%20%20%200%20%20%20%20%20%200%200.0.0.0%3A22%20%20%20%20%20%20%20%20%20%20%20%20%20%200.0.0.0%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20%20%20%20%0Atcp%20%20%20%20%20%20%20%200%20%20%20%20%20%200%20127.0.0.1%3A631%20%20%20%20%20%20%20%20%20%20%200.0.0.0%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20%20%20%20%0Atcp%20%20%20%20%20%20%20%200%20%20%20%20%20%200%200.0.0.0%3A1935%20%20%20%20%20%20%20%20%20%20%20%200.0.0.0%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20%20%20%20%0Atcp%20%20%20%20%20%20%20%200%20%20%20%20%20%200%200.0.0.0%3A8080%20%20%20%20%20%20%20%20%20%20%20%200.0.0.0%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20%20%20%20%0Atcp6%20%20%20%20%20%20%200%20%20%20%20%20%200%20%3A%3A%3A22%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3A%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20%20%20%20%0Atcp6%20%20%20%20%20%20%200%20%20%20%20%20%200%20%3A%3A1%3A631%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%3A%3A%3A*%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20%20LISTEN%20%20" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" height="15" width="14">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_star.png" alt="收藏代码"><img class="spinner" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/spinner.gif" style="display:none"></a></div></div><ol class="dp-j" start="1"><li><span><span>#&nbsp;netstat&nbsp;-ltn&nbsp;&nbsp;</span></span></li><li><span>Active&nbsp;Internet&nbsp;connections&nbsp;(only&nbsp;servers)&nbsp;&nbsp;</span></li><li><span>Proto&nbsp;Recv-Q&nbsp;Send-Q&nbsp;Local&nbsp;Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Foreign&nbsp;Address&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;State&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li><li><span>tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;</span><span class="number">127.0</span><span>.</span><span class="number">1.1</span><span>:</span><span class="number">53</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span>tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:</span><span class="number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span>tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;</span><span class="number">127.0</span><span>.</span><span class="number">0.1</span><span>:</span><span class="number">631</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span>tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:</span><span class="number">1935</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span>tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:</span><span class="number">8080</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0.0</span><span>.</span><span class="number">0.0</span><span>:*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span>tcp6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;:::</span><span class="number">22</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:::*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li><li><span>tcp6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="number">0</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span class="number">0</span><span>&nbsp;::</span><span class="number">1</span><span>:</span><span class="number">631</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:::*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LISTEN&nbsp;&nbsp;&nbsp;&nbsp;</span></span></li></ol></div><pre title="nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器" pre_index="3" source_url="http://redstarofsleep.iteye.com/blog/2123752#" codeable_type="BlogComment" codeable_id="" style="display: none;" name="code" class="java"># netstat -ltn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State      
+tcp        0      0 127.0.1.1:53            0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN     
+tcp        0      0 127.0.0.1:631           0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:1935            0.0.0.0:*               LISTEN     
+tcp        0      0 0.0.0.0:8080            0.0.0.0:*               LISTEN     
+tcp6       0      0 :::22                   :::*                    LISTEN     
+tcp6       0      0 ::1:631                 :::*                    LISTEN  </pre>
+<p>然后用ffmpeg推流到nginx:</p>
+<p>第一个是推到了上面配置的myapp上:</p>
+<div id="" class="dp-highlighter"><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/clipboard_new.swf" flashvars="clipboard=ffmpeg%20-re%20-i%20%22D%3A%5Cdownload%5Cfilm%5Caqgy%5C02.mp4%22%20-vcodec%20libx264%20-vprofile%20baseline%20-acodec%20aac%0A%20-ar%2044100%20-strict%20-2%20-ac%201%20-f%20flv%20-s%201280x720%20-q%2010%20rtmp%3A%2F%2Fserver%3A1935%2F%0Amyapp%2Ftest1" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" height="15" width="14">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_star.png" alt="收藏代码"><img class="spinner" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/spinner.gif" style="display:none"></a></div></div><ol class="dp-j" start="1"><li><span><span>ffmpeg&nbsp;-re&nbsp;-i&nbsp;</span><span class="string">"D:\download\film\aqgy\02.mp4"</span><span>&nbsp;-vcodec&nbsp;libx264&nbsp;-vprofile&nbsp;baseline&nbsp;-acodec&nbsp;aac&nbsp;&nbsp;</span></span></li><li><span>&nbsp;-ar&nbsp;<span class="number">44100</span><span>&nbsp;-strict&nbsp;-</span><span class="number">2</span><span>&nbsp;-ac&nbsp;</span><span class="number">1</span><span>&nbsp;-f&nbsp;flv&nbsp;-s&nbsp;1280x720&nbsp;-q&nbsp;</span><span class="number">10</span><span>&nbsp;rtmp:</span><span class="comment">//server:1935/</span><span>&nbsp;&nbsp;</span></span></li><li><span>myapp/test1&nbsp;&nbsp;</span></li></ol></div><pre title="nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器" pre_index="4" source_url="http://redstarofsleep.iteye.com/blog/2123752#" codeable_type="BlogComment" codeable_id="" style="display: none;" name="code" class="java">ffmpeg -re -i "D:\download\film\aqgy\02.mp4" -vcodec libx264 -vprofile baseline -acodec aac
+ -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://server:1935/
+myapp/test1</pre>
+<p>第二个推送到hls上:</p>
+<div id="" class="dp-highlighter"><div class="bar"><div class="tools">Java代码 <embed wmode="transparent" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/clipboard_new.swf" flashvars="clipboard=ffmpeg%20-re%20-i%20%22D%3A%5Cdownload%5Cfilm%5Caqgy%5C02.mp4%22%20-vcodec%20libx264%20-vprofile%20baseline%20-acodec%20aac%0A%20-ar%2044100%20-strict%20-2%20-ac%201%20-f%20flv%20-s%201280x720%20-q%2010%20rtmp%3A%2F%2Fip%3A1935%2F%0Ahls%2Ftest2" quality="high" allowscriptaccess="always" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" height="15" width="14">&nbsp;<a href="javascript:void()" title="收藏这段代码" onclick="code_favorites_do_favorite(this);return false;"><img class="star" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_star.png" alt="收藏代码"><img class="spinner" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/spinner.gif" style="display:none"></a></div></div><ol class="dp-j" start="1"><li><span><span>ffmpeg&nbsp;-re&nbsp;-i&nbsp;</span><span class="string">"D:\download\film\aqgy\02.mp4"</span><span>&nbsp;-vcodec&nbsp;libx264&nbsp;-vprofile&nbsp;baseline&nbsp;-acodec&nbsp;aac&nbsp;&nbsp;</span></span></li><li><span>&nbsp;-ar&nbsp;<span class="number">44100</span><span>&nbsp;-strict&nbsp;-</span><span class="number">2</span><span>&nbsp;-ac&nbsp;</span><span class="number">1</span><span>&nbsp;-f&nbsp;flv&nbsp;-s&nbsp;1280x720&nbsp;-q&nbsp;</span><span class="number">10</span><span>&nbsp;rtmp:</span><span class="comment">//ip:1935/</span><span>&nbsp;&nbsp;</span></span></li><li><span>hls/test2&nbsp;&nbsp;</span></li></ol></div><pre title="nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器" pre_index="5" source_url="http://redstarofsleep.iteye.com/blog/2123752#" codeable_type="BlogComment" codeable_id="" style="display: none;" name="code" class="java">ffmpeg -re -i "D:\download\film\aqgy\02.mp4" -vcodec libx264 -vprofile baseline -acodec aac
+ -ar 44100 -strict -2 -ac 1 -f flv -s 1280x720 -q 10 rtmp://ip:1935/
+hls/test2</pre>
+<p>现在我们的流媒体服务器有两个实时流了,一个是rtmp的,另一个是hls的,用流媒体播放器播放一下,流媒体播放器可以用vlc也可以用ffmpeg带的ffplay.手机也是可以播放的.</p>
+<p>&nbsp;</p>
+<p>上面这两个流的地址分别是:</p>
+<p>第一个就是推送的地址: rtmp://serverIp:1935/myapp/test1</p>
+<p>第二个是HTTP地址: http://serverIp:8080/hls/test2.m3u8</p>
+<p>&nbsp;</p>
+<p>最后贴上一段对于HLS这个比较特殊的流媒体协议的解释:</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (这段解释来自: http://www.cnblogs.com/haibindev/archive/2013/01/30/2880764.html)</p>
+<p>　　HTTP Live Streaming（HLS）是苹果公司(Apple 
+Inc.)实现的基于HTTP的流媒体传输协议，可实现流媒体的直播和点播，相对于常见的流媒体直播协议，例如RTMP协议、RTSP协议、MMS协议
+等，HLS直播最大的不同在于，直播客户端获取到的，并不是一个完整的数据流。HLS协议在服务器端将直播数据流存储为连续的、很短时长的媒体文件
+（MPEG-TS格式），而客户端则不断的下载并播放这些小文件，因为服务器端总是会将最新的直播数据生成新的小文件，这样客户端只要不停的按顺序播放从
+服务器获取到的文件，就实现了直播。由此可见，基本上可以认为，HLS是以点播的技术方式来实现直播。由于数据通过HTTP协议传输，所以完全不用考虑防
+火墙或者代理的问题，而且分段文件的时长很短，客户端可以很快的选择和切换码率，以适应不同带宽条件下的播放。不过HLS的这种技术特点，决定了它的延迟
+一般总是会高于普通的流媒体直播协议。</p>
+<p>&nbsp;</p>
+<p><span style="color: #ff0000;">转载请注明出处</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</div>
+  </div>
+
+  
+  <div class="attachments">
+    
+      
+        <ul style="display:none;">
+          <li><a href="http://dl2.iteye.com/upload/attachment/0101/6229/7da220c4-0b1f-3bed-b30b-024a8968fd7f.jpg" target="_blank"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/7da220c4-0b1f-3bed-b30b-024a8968fd7f-thumb.jpg" class="magplus" title="点击查看原始大小图片"></a></li>
+          
+          <li>大小: 15.2 KB</li>
+        </ul>
+      
+    
+    
+      <ul>
+        <li><a href="#" onclick="$$('div.attachments ul').invoke('show');$(this).up(1).hide();return false;">查看图片附件</a></li>
+      </ul>
+    
+  </div>
+
+
+  
+  <div data-con="ad_content_488" data-order="93" data-mtp="43" data-mod="ad_popu_171" data-view="true" class="J_adv" style="width: 680px; height: 90px;"><script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/adsbygoogle.js"></script><ins data-adsbygoogle-status="done" class="adsbygoogle" style="display:inline-block;width:468px;height:60px" data-ad-client="ca-pub-8990951720398508" data-ad-slot="8267689356/1918544322"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:60px;margin:0;padding:0;position:relative;visibility:visible;width:468px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:60px;margin:0;padding:0;position:relative;visibility:visible;width:468px;background-color:transparent"><iframe marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;" frameborder="0" height="60" width="468"></iframe></ins></ins></ins><script>(adsbygoogle=window.adsbygoogle || []).push({});</script></div>
+  
+
+  <div id="bottoms" class="clearfix">
+    <div id="digg_bottom" class="clearfix"><div class="digged"><strong>1</strong> <br>顶</div><div class="digged"><strong>0</strong> <br>踩</div></div>
+    <div id="share_weibo">分享到：
+      <a data-type="sina" href="javascript:;" title="分享到新浪微博"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/sina.jpg"></a>
+      <a data-type="qq" href="javascript:;" title="分享到腾讯微博"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/tec.jpg"></a>
+    </div>
+  </div>
+
+  <div class="blog_nav">
+    <div class="pre_next">
+      <a href="http://redstarofsleep.iteye.com/blog/2146555" class="next" title="FFMPEG在Windows下的屏幕录像录音">FFMPEG在Windows下的屏幕录像录音</a>
+      |
+      <a href="http://redstarofsleep.iteye.com/blog/2122612" class="pre" title="ubuntu14.04安装ffmpeg">ubuntu14.04安装ffmpeg</a>
+    </div>
+  </div>
+  <div class="blog_bottom">
+    <ul>
+      <li>2014-09-29 16:38</li>
+      <li>浏览 30127</li>
+      <li><a href="#comments">评论(0)</a></li>
+      
+      
+      <li>分类:<a href="http://www.iteye.com/blogs/category/opensource">开源软件</a></li>      
+      <li class="last"><a href="http://www.iteye.com/wiki/blog/2123752" target="_blank" class="more">相关推荐</a></li>
+    </ul>    
+  </div>
+  
+		    
+		
+<div class="boutique-curr-box blog_comment">
+	  <div class="boutique-curr clearfix">
+	    <h5 class="h3titles">参考知识库</h5>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/operatingsystem"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/1464938192555_555.jpg" alt="" height="58" width="58"></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/operatingsystem" classs="title">操作系统知识库</a>
+              <span>
+                 <em>200</em>&nbsp;&nbsp;关注 <i>|</i> <em>923</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/redis"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/1464683375884_884.jpg" alt="" height="58" width="58"></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/redis" classs="title">Redis知识库</a>
+              <span>
+                 <em>661</em>&nbsp;&nbsp;关注 <i>|</i> <em>560</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/embeddeddevelopment"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/1464164053876_876.jpg" alt="" height="58" width="58"></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/embeddeddevelopment" classs="title">嵌入式开发知识库</a>
+              <span>
+                 <em>368</em>&nbsp;&nbsp;关注 <i>|</i> <em>594</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	    <dl class="dlnewlist">
+	    
+          <dd><a target="_blank" href="http://lib.csdn.net/base/cocos"><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/1464328595855_855.jpg" alt="" height="58" width="58"></a></dd>
+          <dt>
+              <a target="_blank" href="http://lib.csdn.net/base/cocos" classs="title">Cocos引擎知识库</a>
+              <span>
+                 <em>156</em>&nbsp;&nbsp;关注 <i>|</i> <em>291</em>&nbsp;&nbsp;收录                  
+              </span>
+          </dt>
+      
+	    </dl>
+	    
+	  </div>
+</div>
+ 		
+      
+  <div class="blog_comment">
+    <h5>评论</h5>
+    <a id="comments" name="comments"></a>
+    
+    
+    
+  </div>
+
+  <div class="blog_comment">
+    <h5>发表评论</h5>
+            <p style="text-align:center; margin-top:30px;margin-bottom:0px;"><a href="http://redstarofsleep.iteye.com/login" style="background-color:white;"> <img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/login_icon.png" style="vertical-align:middle; margin-right: 10px;"></a><a href="http://redstarofsleep.iteye.com/login">  您还没有登录,请您登录后再发表评论 </a></p>
+      </div>
+</div>
+
+
+<script type="text/javascript">
+  dp.SyntaxHighlighter.HighlightAll('code', true, true);
+
+  $$('#main .blog_content pre[name=code]').each(function(pre, index){ // blog content
+    var post_id = 2123752;
+    var location = window.location;
+    source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+    pre.writeAttribute('codeable_id', post_id);
+    pre.writeAttribute('codeable_type', "Blog");
+    pre.writeAttribute('source_url', source_url);
+    pre.writeAttribute('pre_index', index);
+    pre.writeAttribute('title', 'nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器');
+  });
+
+  fix_image_size($$('div.blog_content img'), 700);
+
+  function processComment() {
+    $$('#main .blog_comment > div').each(function(comment){// comment
+      var post_id = comment.id.substr(2);
+      $$("#"+comment.id+" pre[name=code]").each(function(pre, index){
+        var location = window.location;
+        source_url = location.protocol + "//" + location.host + location.pathname + location.search;
+        source_url += "#" + comment.id;
+        pre.writeAttribute('codeable_id', post_id);
+        pre.writeAttribute('codeable_type', "BlogComment");
+        pre.writeAttribute('source_url', source_url);
+        pre.writeAttribute('pre_index', index);
+        pre.writeAttribute('title', 'nginx+nginx-rtmp-module+ffmpeg搭建流媒体服务器');
+      });
+    });
+  }
+
+  function quote_comment(id) {
+    new Ajax.Request('/editor/quote', {
+      parameters: {'id':id, 'type':'BlogComment'},
+      onSuccess:function(response){editor.bbcode_editor.textarea.insertAfterSelection(response.responseText);
+        Element.scrollTo(editor.bbcode_editor.textarea.element);}
+    });
+  }
+
+  code_favorites_init();
+  processComment();
+  new WeiboShare({share_buttons: $('share_weibo'), img_scope: $('blog_content')});
+</script>
+
+
+
+
+        </div>
+
+        <div id="local">
+          <div class="local_top"></div>
+          <div id="blog_owner">
+  <div id="blog_owner_logo"><a href="http://redstarofsleep.iteye.com/"><img alt="redstarofsleep的博客" class="logo" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/b4cc7e9f-a9f0-3cfd-91ae-5767eb182e83.jpg" title="redstarofsleep的博客: Red Star of Sleep's Blog" width=""></a></div>
+  <div id="blog_owner_name">redstarofsleep</div>
+</div>
+
+          <div id="blog_actions">
+            <ul>
+              <li>浏览: 267273 次</li>
+              <li>性别: <img alt="Icon_minigender_1" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/icon_minigender_1.gif" title="男"></li>
+              <li>来自: 苏州</li>
+              <li><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/offline.gif"></li>
+              
+            </ul>
+          </div>
+          <div id="user_visits" class="clearfix">
+            <h5>最近访客 <span style="font-weight:normal;font-size:12px;padding-left:30px;"><a href="http://redstarofsleep.iteye.com/blog/user_visits">更多访客&gt;&gt;</a></span></h5>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://ycde2009.iteye.com/" target="_blank"><img alt="拖拖鞋的博客" class="logo" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/user-logo-thumb.gif" title="拖拖鞋的博客: 爱生活，爱代娟" width="48px"></a></div>
+                <div class="left"><a href="http://ycde2009.iteye.com/" target="_blank" title="拖拖鞋">拖拖鞋</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://jiating088.iteye.com/" target="_blank"><img alt="jiating088的博客" class="logo" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/user-logo-thumb.gif" title="jiating088的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://jiating088.iteye.com/" target="_blank" title="jiating088">jiating088</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://autumn520.iteye.com/" target="_blank"><img alt="Autumn520的博客" class="logo" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/user-logo-thumb.gif" title="Autumn520的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://autumn520.iteye.com/" target="_blank" title="Autumn520">Autumn520</a></div>
+              </div>
+            
+              <div class="user_visit">
+                <div class="logo"><a href="http://dglmfc.iteye.com/" target="_blank"><img alt="dglMFC的博客" class="logo" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/user-logo-thumb.gif" title="dglMFC的博客: " width="48px"></a></div>
+                <div class="left"><a href="http://dglmfc.iteye.com/" target="_blank" title="dglMFC">dglMFC</a></div>
+              </div>
+            
+          </div>
+
+          
+
+                      <div id="blog_menu">
+              <h5>文章分类</h5>
+              <ul>
+                <li><a href="http://redstarofsleep.iteye.com/">全部博客 (57)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/134553">Web前端 (22)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/134554">Java (18)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/134705">其它 (4)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/135651">WebServer (7)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/138584">Linux (4)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/186140">android (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/198323">设计模式 (2)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/202134">Listener (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/202135">Servlet (5)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/203852">log4j (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/221218">Cookie (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/221724">javascript (2)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/287648">HTML5 (2)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/307365">数据库 (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/319468">git (2)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/321739">rzsz (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/323900">操作系统 (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/323901">流媒体 (3)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/323902">ffmpeg (3)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/323903">ffserver (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/324167">nginx (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/324168">rtmp (1)</a></li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/category/324169">hls (1)</a></li>
+                
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>社区版块</h5>
+              <ul>
+                <li><a href="http://redstarofsleep.iteye.com/blog/news">我的资讯</a> (0)</li>
+                <li>
+                  <a href="http://redstarofsleep.iteye.com/blog/post">我的论坛</a> (21)
+                </li>
+                <li><a href="http://redstarofsleep.iteye.com/blog/answered_problems">我的问答</a> (856)</li>
+              </ul>
+            </div>
+            <div id="month_blogs">
+              <h5>存档分类</h5>
+              <ul>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/blog/monthblog/2015-04">2015-04</a> (1)</li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/blog/monthblog/2014-10">2014-10</a> (1)</li>
+                
+                  <li><a href="http://redstarofsleep.iteye.com/blog/monthblog/2014-09">2014-09</a> (3)</li>
+                
+                <li><a href="http://redstarofsleep.iteye.com/blog/monthblog_more">更多存档...</a></li>
+              </ul>
+            </div>
+            
+            
+
+            <div id="guest_books">
+              <h5>最新评论</h5>
+              <ul>
+                
+                <li>
+                  <a href="http://changjingna.iteye.com/" target="_blank" title="藏在心底">藏在心底</a>： 
+                  &nbsp;&nbsp;&nbsp;<br>
+                  <a href="http://redstarofsleep.iteye.com/blog/1917724#bc2377650">用HTML5canvas绘制一个圆环形的进度表示</a>
+                </li>
+                
+                <li>
+                  <a href="http://mdqy195905.iteye.com/" target="_blank" title="mdqy195905">mdqy195905</a>： 
+                  Java 代码:
+package com.wing;
+
+imp ...<br>
+                  <a href="http://redstarofsleep.iteye.com/blog/1974620#bc2366242">JSR356标准Java WebSocket</a>
+                </li>
+                
+                <li>
+                  <a href="http://redstarofsleep.iteye.com/" target="_blank" title="redstarofsleep">redstarofsleep</a>： 
+                  dwangel 写道好像可以直接用 apt-get insta ...<br>
+                  <a href="http://redstarofsleep.iteye.com/blog/2122612#bc2359471">ubuntu14.04安装ffmpeg</a>
+                </li>
+                
+                <li>
+                  <a href="http://dwangel.iteye.com/" target="_blank" title="dwangel">dwangel</a>： 
+                  好像可以直接用 apt-get install吧<br>
+                  <a href="http://redstarofsleep.iteye.com/blog/2122612#bc2359470">ubuntu14.04安装ffmpeg</a>
+                </li>
+                
+                <li>
+                  <a href="http://ares-basic.iteye.com/" target="_blank" title="Ares_Basic">Ares_Basic</a>： 
+                  楼主 能把你的demo发一份吗 我测试几遍都是404&nbsp; 可能是 ...<br>
+                  <a href="http://redstarofsleep.iteye.com/blog/1488639#bc2359030">基于Tomcat的WebSocket(5月8日更新)</a>
+                </li>
+                
+              </ul>
+            </div>
+
+            <div class="local_bottom"></div>
+          
+        </div>
+      </div>
+
+      <div id="footer" class="clearfix">
+        <div id="copyright">
+          <hr>
+          声明：ITeye文章版权属于作者，受法律保护。没有作者书面许可不得转载。若作者同意转载，必须以超链接形式标明文章原始出处和作者。<br>
+          © 2003-2016 ITeye.com.   All rights reserved.  [ 京ICP证110151号  京公网安备110105010620 ]
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+  document.write("<img src='http://stat.iteye.com/?url="+ encodeURIComponent(document.location.href) + "&referrer=" + encodeURIComponent(document.referrer) + "&user_id=' width='0' height='0' />");
+</script><img src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/a.gif" height="0" width="0">
+
+<script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/tracking_002.js" type="text/javascript"></script>
+
+    
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-25687423-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+      
+    
+    <script language="javascript" type="text/javascript" src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/async_new.js"></script>
+<script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/jquery-1.js" type="text/javascript"></script>
+<script type="text/javascript">var $csdn_iteye_jq = jQuery.noConflict();// 解决jq与prototype.js命名空间冲突的问题</script>
+<script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/tracking.js" type="text/javascript"></script>
+    
+	    
+	    <script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/web-storage-cache.js" type="text/javascript"></script>
+	    <script src="nginx+nginx-rtmp-module+ffmpeg%E6%90%AD%E5%BB%BA%E6%B5%81%E5%AA%92%E4%BD%93%E6%9C%8D%E5%8A%A1%E5%99%A8%20-%20Red%20Star%20of%20Sleep%27s%20Blog%20-%20ITeye%E6%8A%80%E6%9C%AF%E7%BD%91%E7%AB%99_files/replace.js" type="text/javascript"></script>
+    
+    
+  
+
+</body></html>

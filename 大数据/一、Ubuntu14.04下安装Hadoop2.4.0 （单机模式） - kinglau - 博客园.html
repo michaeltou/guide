@@ -1,0 +1,869 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-cn"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>一、Ubuntu14.04下安装Hadoop2.4.0 （单机模式） - kinglau - 博客园</title>
+<link type="text/css" rel="stylesheet" href="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/bundle-SimpleBlue.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/kinglau/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/kinglau/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/kinglau/wlwmanifest.xml">
+<script src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'kinglau', cb_enable_mathjax=false;</script>
+<script src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+		
+<!--done-->
+<div class="title"><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/kinglau/"></a></div>
+<div class="subtitle"></div>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li id="nav_sitehome"><a id="MyLinks1_HomeLink" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li id="nav_myhome"><a id="MyLinks1_MyHomeLink" class="menu" href="http://www.cnblogs.com/kinglau/">首页</a></li>
+<li id="nav_newpost"><a id="MyLinks1_NewPostLink" class="menu" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li id="nav_contact"><a id="MyLinks1_ContactLink" class="menu" rel="nofollow" href="http://msg.cnblogs.com/send/kinglau">联系</a></li>
+<li id="nav_rss"><a id="MyLinks1_Syndication" class="menu" href="http://www.cnblogs.com/kinglau/rss">订阅</a>
+<!--<a id="MyLinks1_XMLLink" class="aHeaderXML" href="http://www.cnblogs.com/kinglau/rss"><img src="http://www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li id="nav_admin"><a id="MyLinks1_Admin" class="menu" rel="nofollow" href="http://i.cnblogs.com/">管理</a></li>
+</ul>
+
+		<div class="blogStats">
+			
+			
+<!--done-->
+随笔-21&nbsp;
+文章-3&nbsp;
+评论-117&nbsp;
+
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="http://www.cnblogs.com/kinglau/p/3794433.html">一、Ubuntu14.04下安装Hadoop2.4.0 （单机模式）</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body"><p style="text-align: center;">&nbsp;</p>
+<h2><span style="font-family: 宋体;">一、在</span>Ubuntu<span style="font-family: 宋体;">下创建</span>hadoop<span style="font-family: 宋体;">组和</span>hadoop<span style="font-family: 宋体;">用户</span></h2>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;增加hadoop用户组，同时在该组里增加hadoop用户<span style="font-family: 宋体;">，</span>后续在涉及到hadoop操作时，我们使用<span style="font-family: 宋体;">该</span>用户<span style="font-family: 宋体;">。</span></p>
+<p>&nbsp;</p>
+<h3><span style="font-family: 宋体;">1、创建</span>hadoop<span style="font-family: 宋体;">用户组</span></h3>
+<p style="margin-left: 53pt;">&nbsp;</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325537236804.png" alt="" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>&nbsp;&nbsp;&nbsp;&nbsp;2<span style="font-family: 宋体;">、创建</span>hadoop<span style="font-family: 宋体;">用户 </span></h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;sudo adduser -ingroup hadoop hadoop</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;回车后会提示输入新的UNIX密码，这是新建用户hadoop的密码<span style="font-family: 宋体;">，</span>输入回车即可。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;如果不输入密码，回车后会重新提示输入密码，即密码不能为空。</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;最后确认信息是否正确，如果没问题，输入 Y，回车即可。</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325547071504.png" alt="" align="left">&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>&nbsp;&nbsp;&nbsp;&nbsp;3<span style="font-family: 宋体;">、为</span>hadoop<span style="font-family: 宋体;">用户添加权限</span></h3>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 输入：sudo gedit /etc/sudoers</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 回车，打开sudoers文件</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; 给hadoop用户赋予和root用户同样的权限</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325553952348.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325561927991.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>二、用新增加的hadoop用户登录Ubuntu系统</h2>
+<p>&nbsp;</p>
+<h2>三、安装ssh</h2>
+<p>sudo apt-get install openssh-server</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325569737863.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>安装完成后，启动服务</p>
+<p>sudo /etc/init.d/ssh start</p>
+<p>&nbsp;</p>
+<p>查看服务是否正确启动：ps -e | grep ssh</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325580364821.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>设置免密码登录，生成私钥和公钥</p>
+<p>ssh-keygen -t rsa -P ""</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325587709679.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>此时会在／home／hadoop/.ssh下生成两个文件：id_rsa和id_rsa.pub，前者为私钥，后者为公钥。</p>
+<p>下面我们将公钥追加到authorized_keys中，它用户保存所有允许以当前用户身份登录到ssh客户端用户的公钥内容。</p>
+<p>cat ~/.ssh/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325593481023.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>登录ssh</p>
+<p>ssh localhost</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181325598014095.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</p>
+<p>退出</p>
+<p>exit</p>
+<p>&nbsp;</p>
+<h2>四、安装Java环境</h2>
+<p>sudo apt-get install openjdk-7-jdk</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326008641052.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>查看安装结果，输入命令：java -version，结果如下表示安装成功。</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326019736724.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><span style="font-family: 宋体;">五、安装</span>hadoop2.4.0</h2>
+<h3>&nbsp;&nbsp;&nbsp;&nbsp;1<span style="font-family: 宋体;">、官网下载</span><span style="text-decoration: underline;">http://mirror.bit.edu.cn/apache/hadoop/common/</span></h3>
+<p>&nbsp;</p>
+<h3>&nbsp;&nbsp;&nbsp;&nbsp;2<span style="font-family: 宋体;">、安装</span></h3>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;解压</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sudo tar xzf hadoop-2.4.0.tar.gz&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;假如我们要把hadoop安装到/usr/local下</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;拷贝到/usr/local/下，文件夹为hadoop</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sudo mv hadoop-2.4.0 
+/usr/local/hadoop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326023644310.png" alt="" align="left"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<p style="margin-left: 36pt;">赋予用户对该文件夹的读写权限</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sudo chmod 774 /usr/local/hadoop</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326027238353.png" alt="" align="left"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<h3>3、配置</h3>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1）<span style="font-family: 宋体;">配置</span>~/.bashrc</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p style="margin-left: 36pt;"><span style="font-family: 宋体;">配置</span>该文件前需要知道Java的安装路径，用来设置JAVA_HOME环境变量，可以使用下面命令行查看安装路径</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;update-alternatives - -config java</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行结果如下：</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326030041140.png" alt="" align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>完整的路径为</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;我们只取前面的部分 /usr/lib/jvm/java-7-openjdk-amd64</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;配置.bashrc文件</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;sudo gedit ~/.bashrc</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;该命令会打开该文件的编辑窗口，在文件末尾追加下面内容，然后保存，关闭编辑窗口。</p>
+<p style="margin-left: 44pt;">#HADOOP VARIABLES START</p>
+<p style="margin-left: 44pt;">export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64</p>
+<p style="margin-left: 44pt;">export HADOOP_INSTALL=/usr/local/hadoop</p>
+<p style="margin-left: 44pt;">export PATH=$PATH:$HADOOP_INSTALL/bin</p>
+<p style="margin-left: 44pt;">export PATH=$PATH:$HADOOP_INSTALL/sbin</p>
+<p style="margin-left: 44pt;">export HADOOP_MAPRED_HOME=$HADOOP_INSTALL</p>
+<p style="margin-left: 44pt;">export HADOOP_COMMON_HOME=$HADOOP_INSTALL</p>
+<p style="margin-left: 44pt;">export HADOOP_HDFS_HOME=$HADOOP_INSTALL</p>
+<p style="margin-left: 44pt;">export YARN_HOME=$HADOOP_INSTALL</p>
+<p style="margin-left: 44pt;">export HADOOP_COMMON_LIB_NATIVE_DIR=$HADOOP_INSTALL/lib/native</p>
+<p style="margin-left: 44pt;">export HADOOP_OPTS="-Djava.library.path=$HADOOP_INSTALL/lib"</p>
+<p style="margin-left: 44pt;">#HADOOP VARIABLES END</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>最终结果如下图：</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326035825782.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p style="margin-left: 36pt;">执行下面命，使添加的环境变量生效：</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source ~/.bashrc</p>
+<p>2）编辑/usr/local/hadoop/etc/hadoop/hadoop-env.sh</p>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;执行下面命令<span style="font-family: 宋体;">，</span>打开该文件的编辑窗口</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sudo gedit /usr/local/hadoop/etc/hadoop/hadoop-env.sh</p>
+<p style="margin-left: 36pt;">找到JAVA_HOME变量，修改此变量如下</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;修改后的hadoop-env.sh文件如下所示<span style="font-family: 宋体;">：</span></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326041767598.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2><span style="font-family: 宋体;">六、</span>WordCount测试</h2>
+<p>&nbsp;</p>
+<p>单机模式安装完成，下面通过执行hadoop自带实例WordCount验证是否安装成功</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/hadoop路径下创建input文件夹&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>mkdir input</p>
+<p>&nbsp;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;拷贝README.txt到input&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>cp README.txt input</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;执行WordCount</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;bin/hadoop jar 
+share/hadoop/mapreduce/sources/hadoop-mapreduce-examples-2.4.0-sources.jar
+ org.apache.hadoop.examples.WordCount input output</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326049269226.png" alt="" align="left"></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>执行结果：</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326055049570.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>执行 cat output/*，查看字符统计结果</p>
+<p><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/181326062072484.png" alt="" align="left"></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/kinglau/category/509016.html">Hadoop</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/kinglau/tag/hadoop/">hadoop</a></div>
+<div id="blog_post_info"><div id="green_channel">
+<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(3794433,cb_blogId,1);green_channel_success(this,'谢谢推荐！');">好文要顶</a>
+<a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a>
+<a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><a id="green_channel_contact" href="http://msg.cnblogs.com/send/kinglau" target="_blank">联系我</a>
+<a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/icon_weibo_24.png" alt=""></a>
+<a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/kinglau/" target="_blank"><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/sample_face.gif" class="author_avatar" alt=""></a>
+<div id="author_profile_detail" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/kinglau/">kinglau</a><br>
+<a href="http://home.cnblogs.com/u/kinglau/followees">关注 - 18</a><br>
+<a href="http://home.cnblogs.com/u/kinglau/followers">粉丝 - 55</a>
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow">
+    <a href="javascript:void(0);" onclick="c_follow();return false;">+加关注</a>
+</div>
+</div>
+<div id="div_digg">										
+    <div class="diggit" onclick="votePost(3794433,'Digg')">
+        <span class="diggnum" id="digg_count">6</span>
+    </div>
+	<div class="buryit" onclick="votePost(3794433,'Bury')"> 
+		<span class="burynum" id="bury_count">0</span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips">
+    (请您对文章做出评价)
+    </div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/kinglau/p/3364928.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/kinglau/p/3364928.html" title="发布于2013-10-12 11:23">伪分布模式下执行wordcount实例时报错解决办法</a><br><a href="http://www.cnblogs.com/kinglau/p/3796164.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/kinglau/p/3796164.html" title="发布于2014-06-19 11:29">二、Ubuntu14.04下安装Hadoop2.4.0 （伪分布模式）</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2014-06-18 13:26</span> <a href="http://www.cnblogs.com/kinglau/">kinglau</a> 阅读(<span id="post_view_count">40502</span>) 评论(<span id="post_comment_count">18</span>)  <a href="http://i.cnblogs.com/EditPosts.aspx?postid=3794433" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(3794433);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,isLogined=false,cb_blogId=15653,cb_entryId=3794433,cb_blogApp=currentBlogApp,cb_blogUserGuid='9949360b-63cf-dd11-9e4d-001cf0cd104b',cb_entryCreatedDate='2014/6/18 13:26:00';loadViewCount(cb_entryId);</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<!--done-->
+<div class="feedback_area_title">评论列表</div>
+<div class="feedbackNoItems"></div>
+	
+
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#2990208" class="layer">#1楼</a><a name="2990208" id="comment_anchor_2990208"></a>  <span class="comment_date">2014-07-18 18:28</span> <a id="a_comment_author_2990208" href="http://home.cnblogs.com/u/650317/" target="_blank">江南客</a> <a href="http://msg.cnblogs.com/send/%E6%B1%9F%E5%8D%97%E5%AE%A2" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_2990208" class="blog_comment_body">you must be  a BITer  .上网不涉密。。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(2990208,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(2990208,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3005867" class="layer">#2楼</a><a name="3005867" id="comment_anchor_3005867"></a>  <span class="comment_date">2014-08-12 11:22</span> <a id="a_comment_author_3005867" href="http://home.cnblogs.com/u/468316/" target="_blank">默默前进......</a> <a href="http://msg.cnblogs.com/send/%E9%BB%98%E9%BB%98%E5%89%8D%E8%BF%9B......" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3005867" class="blog_comment_body">well done, tks very much!!!!</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3005867,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3005867,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3032476" class="layer">#3楼</a><a name="3032476" id="comment_anchor_3032476"></a>  <span class="comment_date">2014-09-22 20:24</span> <a id="a_comment_author_3032476" href="http://www.cnblogs.com/xuepeng0521/" target="_blank">自强自律</a> <a href="http://msg.cnblogs.com/send/%E8%87%AA%E5%BC%BA%E8%87%AA%E5%BE%8B" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3032476" class="blog_comment_body">求帮助：最好一步WordCount测试出现如下问题<br>找不到或无法加载主类 org.apache.hadoop.util.RunJar</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3032476,'Digg',this)">支持(1)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3032476,'Bury',this)">反对(0)</a></div><span id="comment_3032476_avatar" style="display:none;">http://pic.cnblogs.com/face/623234/20140413185257.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3039653" class="layer">#4楼</a><a name="3039653" id="comment_anchor_3039653"></a>  <span class="comment_date">2014-10-08 09:36</span> <a id="a_comment_author_3039653" href="http://home.cnblogs.com/u/678916/" target="_blank">lxwlxw</a> <a href="http://msg.cnblogs.com/send/lxwlxw" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3039653" class="blog_comment_body"><a href="#3032476" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3032476);">@</a>
+自强自律<br>我也遇到，检查一下安装hadoop2.4的步骤配置里（2）gedit  ~/hadoop-env.sh<br>文件中JAVA_HOME= 是否更改。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3039653,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3039653,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3041869" class="layer">#5楼</a><a name="3041869" id="comment_anchor_3041869"></a>  <span class="comment_date">2014-10-11 14:16</span> <a id="a_comment_author_3041869" href="http://home.cnblogs.com/u/680271/" target="_blank">晓燕在努力</a> <a href="http://msg.cnblogs.com/send/%E6%99%93%E7%87%95%E5%9C%A8%E5%8A%AA%E5%8A%9B" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3041869" class="blog_comment_body">谢谢你的分享～平台得以搭建成功！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3041869,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3041869,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3043742" class="layer">#6楼</a><a name="3043742" id="comment_anchor_3043742"></a>  <span class="comment_date">2014-10-14 16:25</span> <a id="a_comment_author_3043742" href="http://home.cnblogs.com/u/681328/" target="_blank">zjxclc</a> <a href="http://msg.cnblogs.com/send/zjxclc" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3043742" class="blog_comment_body">十分感谢！多亏了您的文章，平台搭建好了</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3043742,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3043742,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3052003" class="layer">#7楼</a><a name="3052003" id="comment_anchor_3052003"></a>  <span class="comment_date">2014-10-27 18:43</span> <a id="a_comment_author_3052003" href="http://www.cnblogs.com/XMJQVRWSD/" target="_blank">名牌果果</a> <a href="http://msg.cnblogs.com/send/%E5%90%8D%E7%89%8C%E6%9E%9C%E6%9E%9C" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3052003" class="blog_comment_body">error: XDG_RUNTIME_DIR not set in the environment.<br>在配置使用这个sudo gedit ~/.bashrc<br>命令时出现上面这个错误时什么原因？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3052003,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3052003,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3056628" class="layer">#8楼</a><a name="3056628" id="comment_anchor_3056628"></a>  <span class="comment_date">2014-11-03 20:06</span> <a id="a_comment_author_3056628" href="http://www.cnblogs.com/waterismirror/" target="_blank">止水若镜</a> <a href="http://msg.cnblogs.com/send/%E6%AD%A2%E6%B0%B4%E8%8B%A5%E9%95%9C" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3056628" class="blog_comment_body">我之前操作了chmod /usr/local/hadoop和sudo gedit /etc/sudoers。<br>当操作到 WordCount测试，接着在你展示的图片的目录下mkdir input。总是提示permission denied？博主知道什么原因吗？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3056628,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3056628,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3077965" class="layer">#9楼</a><a name="3077965" id="comment_anchor_3077965"></a>  <span class="comment_date">2014-12-04 12:42</span> <a id="a_comment_author_3077965" href="http://home.cnblogs.com/u/580626/" target="_blank">山下灰太狼</a> <a href="http://msg.cnblogs.com/send/%E5%B1%B1%E4%B8%8B%E7%81%B0%E5%A4%AA%E7%8B%BC" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3077965" class="blog_comment_body">参照撸主的文章，成功运行了一把，谢谢撸主(^_^)</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3077965,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3077965,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3114944" class="layer">#10楼</a><a name="3114944" id="comment_anchor_3114944"></a>  <span class="comment_date">2015-01-26 14:18</span> <a id="a_comment_author_3114944" href="http://www.cnblogs.com/cc-jony/" target="_blank">cc_jony</a> <a href="http://msg.cnblogs.com/send/cc_jony" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3114944" class="blog_comment_body">lz是在32位下安装的还是64位？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3114944,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3114944,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3157628" class="layer">#11楼</a><a name="3157628" id="comment_anchor_3157628"></a>  <span class="comment_date">2015-04-07 18:52</span> <a id="a_comment_author_3157628" href="http://home.cnblogs.com/u/741360/" target="_blank">mack007</a> <a href="http://msg.cnblogs.com/send/mack007" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3157628" class="blog_comment_body">很赞，我部署成功了~</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3157628,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3157628,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3242776" class="layer">#12楼</a><a name="3242776" id="comment_anchor_3242776"></a>  <span class="comment_date">2015-08-06 18:11</span> <a id="a_comment_author_3242776" href="http://home.cnblogs.com/u/792957/" target="_blank">swustxxl</a> <a href="http://msg.cnblogs.com/send/swustxxl" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3242776" class="blog_comment_body">照楼主的帖子走到最后一部，运行wordcount，不成功哦<br>出现<a href="http://bbs.csdn.net/topics/390256219/%E8%BF%99%E4%B8%AA%E5%B8%96%E5%AD%90%E4%B8%8A%E4%B8%80%E6%A0%B7%E7%9A%84%E9%94%99%E8%AF%AF" target="_blank">http://bbs.csdn.net/topics/390256219/这个帖子上一样的错误</a><br>貌似是没有包括相应的java包，楼主帖子里也没有指明有需要包含这样的包啊？这个帖子也只是说重新安一遍就好了，莫名其妙，我重新按一次还是这样<br><br>其实走到这一步时  “查看服务是否正确启动：ps -e | grep ssh”，已经有点小出入了，只能显示你帖子中显示的最后一行内容，是否和后面不能正常运行实例有关？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3242776,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3242776,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3259813" class="layer">#13楼</a><a name="3259813" id="comment_anchor_3259813"></a>  <span class="comment_date">2015-09-04 14:35</span> <a id="a_comment_author_3259813" href="http://www.cnblogs.com/Xilian/" target="_blank">Rita li</a> <a href="http://msg.cnblogs.com/send/Rita%20li" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3259813" class="blog_comment_body">成功！<br>如果遇到错误：找不到或无法加载主类 org.apache.hadoop.util.RunJar<br>不是java环境配置的问题，而是hadoop-mapreduce-examples-2.4.0-sources.jar文件不存在或者名称与自己的hadoop版本不同。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3259813,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3259813,'Bury',this)">反对(0)</a></div><span id="comment_3259813_avatar" style="display:none;">http://pic.cnblogs.com/face/545179/20140830105516.png</span>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3279522" class="layer">#14楼</a><a name="3279522" id="comment_anchor_3279522"></a>  <span class="comment_date">2015-10-07 19:18</span> <a id="a_comment_author_3279522" href="http://www.cnblogs.com/daixianjun/" target="_blank">笑吧</a> <a href="http://msg.cnblogs.com/send/%E7%AC%91%E5%90%A7" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3279522" class="blog_comment_body">成功，谢谢博主的细致分享。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3279522,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3279522,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3279525" class="layer">#15楼</a><a name="3279525" id="comment_anchor_3279525"></a>  <span class="comment_date">2015-10-07 19:20</span> <a id="a_comment_author_3279525" href="http://www.cnblogs.com/daixianjun/" target="_blank">笑吧</a> <a href="http://msg.cnblogs.com/send/%E7%AC%91%E5%90%A7" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3279525" class="blog_comment_body"><a href="#3259813" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,3259813);">@</a>
+Rita li<br><fieldset class="comment_quote"><legend><a href="#3259813" title="查看引用原文">引用</a></legend>成功！<br>如果遇到错误：找不到或无法加载主类 org.apache.hadoop.util.RunJar<br>不是java环境配置的问题，而是hadoop-mapreduce-examples-2.4.0-sources.jar文件不存在或者名称与自己的hadoop版本不同。</fieldset><br>我装得是hadoop-2.7.0的，一样可以成功。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3279525,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3279525,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3282429" class="layer">#16楼</a><a name="3282429" id="comment_anchor_3282429"></a>  <span class="comment_date">2015-10-11 19:43</span> <a id="a_comment_author_3282429" href="http://home.cnblogs.com/u/821189/" target="_blank">littledreamer</a> <a href="http://msg.cnblogs.com/send/littledreamer" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3282429" class="blog_comment_body">谢谢博主分享</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3282429,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3282429,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3291569" class="layer">#17楼</a><a name="3291569" id="comment_anchor_3291569"></a>  <span class="comment_date">2015-10-25 11:44</span> <a id="a_comment_author_3291569" href="http://home.cnblogs.com/u/402376/" target="_blank">kervin</a> <a href="http://msg.cnblogs.com/send/kervin" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3291569" class="blog_comment_body">写的什么玩意，命令都搞错了，update-alternatives - -config java两个横杠中间多了个空格。些东西能负点责任么！</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3291569,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3291569,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	
+		<div class="feedbackItem">
+			<div class="feedbackListSubtitle">
+				<div class="feedbackManage">
+					&nbsp;&nbsp;<span class="comment_actions"></span>
+				</div>
+				<a href="#3433754" class="layer">#18楼</a><a name="3433754" id="comment_anchor_3433754"></a><span id="comment-maxId" style="display:none;">3433754</span><span id="comment-maxDate" style="display:none;">2016/5/18 10:08:38</span>  <span class="comment_date">2016-05-18 10:08</span> <a id="a_comment_author_3433754" href="http://www.cnblogs.com/laoguo1991/" target="_blank">老郭郭</a> <a href="http://msg.cnblogs.com/send/%E8%80%81%E9%83%AD%E9%83%AD" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="feedbackCon">
+				<div id="comment_body_3433754" class="blog_comment_body">我出现的错误：SHA-
+1 not available  。后来查询后发现有是因为有些pack文件没有解压成jar格式，所以找不到。  
+要去jre/lib里面把jsse.pack解压成jsee.jar格式才行。 其他目录的pack也解压成jar最好。 命令：unpack200 
+jsse.pack jsee.jar 。 最好也取得文件修改权限。然后再去运行就OK了。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3433754,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3433754,'Bury',this)">反对(0)</a></div>
+			</div>
+		</div>
+	<div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login('commentform');">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.rongcloud.cn/" target="_blank">【推荐】融云即时通讯云－豆果美食、Faceu等亿级APP都在用</a><br><a href="http://www.gcpowertools.com.cn/products/activereports/excel.htm?utm_source=cnblogs&amp;utm_medium=blogpage&amp;utm_term=bottom&amp;utm_content=AR&amp;utm_campaign=community" target="_blank">【推荐】Excel 报表开发18 招式，人人都能做报表</a><br><a href="http://group.cnblogs.com/topic/74539.html" target="_blank">【推荐】阿里云万网域名：.xin .com将推出重磅优惠</a><br><a href="http://t.cn/RqDmMiB" target="_blank">【活动】开发交流会：当轻架构前端撞上高性能大数据后台</a><br></div>
+<div id="opt_under_post"></div>
+<div id="ad_c1" class="c_ad_block"><a href="https://www.wilddog.com/?utm_source=cnblogs&amp;utm_medium=banner&amp;utm_campaign=orangemarch" target="_blank"><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/cnblogs-300x250-1.jpg" alt="" height="250" width="300"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/545831/" target="_blank">语音控制不够酷，谷歌推出隔空手势操作技术</a><br> ·  <a href="http://news.cnblogs.com/n/545829/" target="_blank">NASA探测器发现地球周围存在高能质子环</a><br> ·  <a href="http://news.cnblogs.com/n/545828/" target="_blank">科学家们发现了一种抗衰老基因</a><br> ·  <a href="http://news.cnblogs.com/n/545827/" target="_blank">富士康正为华为建设手机代工厂 选址任正非家乡贵州</a><br> ·  <a href="http://news.cnblogs.com/n/545826/" target="_blank">微软为何关闭MSN中国？难敌百度腾讯等本土巨头</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="ad_c2" class="c_ad_block"><a href="https://www.jpush.cn/?from=cnblogs01" target="_blank"><img src="%E4%B8%80%E3%80%81Ubuntu14.04%E4%B8%8B%E5%AE%89%E8%A3%85Hadoop2.4.0%20%EF%BC%88%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%EF%BC%89%20-%20kinglau%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/24442-20160307140747632-1210035054.jpg" alt="" height="60" width="468"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/543110/" target="_blank">架构漫谈（九）：理清技术、业务和架构的关系</a><br> ·  <a href="http://kb.cnblogs.com/page/542725/" target="_blank">架构漫谈（八）：从架构的角度看如何写好代码</a><br> ·  <a href="http://kb.cnblogs.com/page/542257/" target="_blank">架构漫谈（七）：不要空设架构师这个职位，给他实权</a><br> ·  <a href="http://kb.cnblogs.com/page/541740/" target="_blank">架构漫谈（六）：软件架构到底是要解决什么问题？</a><br> ·  <a href="http://kb.cnblogs.com/page/541188/" target="_blank">架构漫谈（五）：什么是软件</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);    
+});
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div id="profile_block">昵称：<a href="http://home.cnblogs.com/u/kinglau/">kinglau</a><br>园龄：<a href="http://home.cnblogs.com/u/kinglau/" title="入园时间：2005-12-09">10年5个月</a><br>粉丝：<a href="http://home.cnblogs.com/u/kinglau/followers/">55</a><br>关注：<a href="http://home.cnblogs.com/u/kinglau/followees/">18</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="cnblogs.UserManager.FollowBlogger('9949360b-63cf-dd11-9e4d-001cf0cd104b')">+加关注</a></div></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="calendar"><div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" title="日历" cellpadding="0" cellspacing="0">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar('2016/04/01');return false;">&lt;</a></td><td align="center">2016年5月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar('2016/06/01');return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" abbr="日" scope="col" align="center">日</th><th class="CalDayHeader" abbr="一" scope="col" align="center">一</th><th class="CalDayHeader" abbr="二" scope="col" align="center">二</th><th class="CalDayHeader" abbr="三" scope="col" align="center">三</th><th class="CalDayHeader" abbr="四" scope="col" align="center">四</th><th class="CalDayHeader" abbr="五" scope="col" align="center">五</th><th class="CalDayHeader" abbr="六" scope="col" align="center">六</th></tr><tr><td class="CalOtherMonthDay" align="center">24</td><td class="CalOtherMonthDay" align="center">25</td><td class="CalOtherMonthDay" align="center">26</td><td class="CalOtherMonthDay" align="center">27</td><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td></tr><tr><td class="CalWeekendDay" align="center">1</td><td align="center">2</td><td align="center">3</td><td align="center">4</td><td align="center">5</td><td align="center">6</td><td class="CalWeekendDay" align="center">7</td></tr><tr><td class="CalWeekendDay" align="center">8</td><td align="center">9</td><td align="center">10</td><td align="center">11</td><td align="center">12</td><td align="center">13</td><td class="CalWeekendDay" align="center">14</td></tr><tr><td class="CalWeekendDay" align="center">15</td><td align="center">16</td><td align="center">17</td><td align="center">18</td><td align="center">19</td><td align="center">20</td><td class="CalWeekendDay" align="center">21</td></tr><tr><td class="CalTodayDay" align="center">22</td><td align="center">23</td><td align="center">24</td><td align="center">25</td><td align="center">26</td><td align="center">27</td><td class="CalWeekendDay" align="center">28</td></tr><tr><td class="CalWeekendDay" align="center">29</td><td align="center">30</td><td align="center">31</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script></div>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk" type="text">&nbsp;<input onclick="zzk_go()" value="找找看" id="btnZzk" class="btn_my_zzk" type="button"></div>
+<div id="widget_my_google" class="div_my_zzk"><input name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk" type="text">&nbsp;<input onclick="google_go()" value="谷歌搜索" class="btn_my_zzk" type="button"></div>
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/kinglau/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/kinglau/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/kinglau/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/kinglau/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/kinglau/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/kinglau/tag/hadoop/">hadoop</a>(5)</li><li><a href="http://www.cnblogs.com/kinglau/tag/ASP.Net%20MVC3/">ASP.Net MVC3</a>(4)</li><li><a href="http://www.cnblogs.com/kinglau/tag/eclipse/">eclipse</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/json/">json</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/Mac%20os/">Mac os</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/mysql/">mysql</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/PHP/">PHP</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/PhpStorm/">PhpStorm</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/%E4%B9%B1%E7%A0%81/">乱码</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86/">项目管理</a>(1)</li><li><a href="http://www.cnblogs.com/kinglau/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div class="catListPostCategory">
+<h3 class="catListTitle">随笔分类</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/kinglau/category/303729.html">ASP.NET MVC(4)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/kinglau/category/509016.html">Hadoop(6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/kinglau/category/396867.html">HTML5(1)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/kinglau/category/642828.html">PHP</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/kinglau/category/642826.html">SQLServer</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/kinglau/category/303728.html">Windows Phone(2)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/kinglau/category/85435.html">个人随笔(5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/kinglau/category/85434.html">文章收集</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/kinglau/category/398418.html">项目管理(1)</a> </li>
+
+</ul>
+
+</div>
+
+<div class="catListPostArchive">
+<h3 class="catListTitle">随笔档案</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/kinglau/archive/2014/09.html">2014年9月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/kinglau/archive/2014/08.html">2014年8月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/kinglau/archive/2014/06.html">2014年6月 (4)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/kinglau/archive/2013/10.html">2013年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/kinglau/archive/2013/08.html">2013年8月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/kinglau/archive/2013/02.html">2013年2月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/kinglau/archive/2012/07.html">2012年7月 (2)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/kinglau/archive/2011/10.html">2011年10月 (1)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/kinglau/archive/2011/07.html">2011年7月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_9" href="http://www.cnblogs.com/kinglau/archive/2011/06.html">2011年6月 (2)</a> </li>
+
+</ul>
+
+</div>
+
+<div class="catList">
+<h3 class="catListTitle">开发链接</h3>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/kinglau/p/3794433.html#3433754">1. Re:一、Ubuntu14.04下安装Hadoop2.4.0 （单机模式）</a></li>
+        <li class="recent_comment_body">我出现的错误：SHA-1 not available 。后来查询后发现有是因为有些pack文件没有解压成jar格式，所以找不到。 要去jre/lib里面把jsse.pack解压成jsee.jar格......</li>
+        <li class="recent_comment_author">--老郭郭</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/kinglau/archive/2011/07/25/2116656.html#3431515">2. Re:ASP.NET MVC3使用Unity2.0实现依赖注入</a></li>
+        <li class="recent_comment_body">可以的</li>
+        <li class="recent_comment_author">--阿超－</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/kinglau/p/3270160.html#3413410">3. Re:Windows平台下安装Hadoop</a></li>
+        <li class="recent_comment_body">$bin/start-all.sh出现问题：slaves:ssh:could not resolve hostname slaves:name of service not knownvi:ssh:c......</li>
+        <li class="recent_comment_author">--sunxuesunxue</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/kinglau/p/3270160.html#3389712">4. Re:Windows平台下安装Hadoop</a></li>
+        <li class="recent_comment_body">$ ./hadoop namenode -format/home/Administrator/hadoop/hadoop-common-project/hadoop-common/src/main/b......</li>
+        <li class="recent_comment_author">--zhangzhenxiao</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/kinglau/p/3919289.html#3362200">5. Re:笔记：MAC OS X下配置PHP开发、调试环境</a></li>
+        <li class="recent_comment_body">赞 成功debug 不过mac下面已经有php了<br>比较熟悉的可以忽略 直接利用mac自带php环境</li>
+        <li class="recent_comment_author">--wlei24</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/kinglau/p/3270160.html">1. Windows平台下安装Hadoop(50468)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3794433.html">2. 一、Ubuntu14.04下安装Hadoop2.4.0 （单机模式）(40503)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3802705.html">3. Eclipse下搭建Hadoop2.4.0开发环境(25510)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3287096.html">4. Hadoop的datanode无法启动(21321)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3919289.html">5. 笔记：MAC OS X下配置PHP开发、调试环境(20511)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/kinglau/p/3270160.html">1. Windows平台下安装Hadoop(40)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3796164.html">2. 二、Ubuntu14.04下安装Hadoop2.4.0 （伪分布模式）(22)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3794433.html">3. 一、Ubuntu14.04下安装Hadoop2.4.0 （单机模式）(18)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3802705.html">4. Eclipse下搭建Hadoop2.4.0开发环境(13)</a></li><li><a href="http://www.cnblogs.com/kinglau/archive/2011/07/06/2099095.html">5. ASP.NET MVC3 Use Remote Validation(6)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/kinglau/p/3796164.html">1. 二、Ubuntu14.04下安装Hadoop2.4.0 （伪分布模式）(7)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3270160.html">2. Windows平台下安装Hadoop(7)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3794433.html">3. 一、Ubuntu14.04下安装Hadoop2.4.0 （单机模式）(6)</a></li><li><a href="http://www.cnblogs.com/kinglau/p/3802705.html">4. Eclipse下搭建Hadoop2.4.0开发环境(4)</a></li><li><a href="http://www.cnblogs.com/kinglau/archive/2011/10/17/2215362.html">5. ASP.NET MVC3 异常处理 学习笔记(3)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2016 kinglau
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+</body></html>
