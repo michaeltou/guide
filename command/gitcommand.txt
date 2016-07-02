@@ -1,0 +1,11 @@
+1、Git  branch  test_fenzhi  添加分支
+
+2、git  checkout  test_fenzhi 切换到分支下面   就可以做一些操作了
+
+3、git push origin test_fenzhi   添加远程
+
+
+
+4、git branch -d  test_fenzhi  必须切换到别的分支 才能执行此操作
+
+5、git push origin :test_fenzhi 删除远程分支 
